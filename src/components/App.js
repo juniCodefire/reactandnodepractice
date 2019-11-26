@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from './Header';
+import PropTypes from 'prop-types';
 import ContestList from "./ContestList";
 import Contest from "./Contest"
 import * as api from '../api';
@@ -7,14 +8,24 @@ import * as api from '../api';
 const pushState = (obj, url) =>
   window.history.pushState(obj, '', url);
 
+const onPopState = handler => {
+    window.onpopstate = handler;
+}
+
 class App extends React.Component  {
-  state = {
-    pageHeader : 'Naming Contests',
-    contests: this.props.initialContests
-  };
-
+  static propTypes = {
+    initialData: PropTypes.object.isRequired
+  }
+  state = this.props.initialData;
   componentDidMount() {
-
+      // window.onpopstate = (event) => {
+      //   console.log(event);
+      // }
+      onPopState((event) => {
+        this.setState({
+          currentContestId: (event.state || {}).currentContestId
+        });
+       });
   }
   componentWillUnmount() {
 
@@ -40,10 +51,38 @@ class App extends React.Component  {
     });
   };
 
+  fetchContestList = () => {
+    pushState(
+      { currentContestId: null},
+      `/`
+
+    );
+
+    api.fetchContestList().then(contests => {
+     this.setState({
+        currentContestId: null,
+        contests
+      });
+    });
+  };
+
+  currentContest() {
+    return this.state.contests[this.state.currentContestId];
+  }
+  pageHeader() {
+    if(this.state.currentContestId) {
+      return this.currentContest().contestName;
+    }
+
+    return 'Naming Contest';
+
+  }
   currentContent() {
       if(this.state.currentContestId) {
-        return <Contest {...this.state.contests[this.state.currentContestId]} />;
-      }
+        return <Contest
+                    contestListClick={this.fetchContestList}
+                     {...this.currentContest()} />;
+       }
 
       return <ContestList
          onContestClick={this.fetchContest}
@@ -53,7 +92,7 @@ class App extends React.Component  {
   render() {
     return(
       <div className="App">
-        <Header message={this.state.pageHeader} />
+        <Header message={this.pageHeader()} />
         {this.currentContent()}
       </div>
     );
