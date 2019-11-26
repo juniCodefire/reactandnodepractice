@@ -10,6 +10,12 @@ ReactDOM.hydrate(
   document.getElementById('root')
 );
  
+ // setTimeout(function () {
+ // 	ReactDOM.render(
+ // 		<h2>Clear!!</h2>,
+ // 		document.getElementById('root')
+ // 	);
+ // }, 5000);
 	
 
 

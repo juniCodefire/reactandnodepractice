@@ -14,9 +14,11 @@ const ContestList = ({contests, onContestClick}) => {
 	    </div>
 	);
 };
+
 //ContestList Validation
 ContestList.propTypes = {
 	contests: PropTypes.object,
 	onContestClick: PropTypes.func.isRequired,
 }
+
 export default ContestList; 

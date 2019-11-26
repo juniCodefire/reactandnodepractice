@@ -22,4 +22,4 @@ Contest.propTypes = {
 	contestListClick: PropTypes.func.isRequired
 };
 
-export default Contest;
+export default Contest; 
